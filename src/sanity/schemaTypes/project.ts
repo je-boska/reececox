@@ -1,3 +1,4 @@
+import { orderRankField, orderRankOrdering } from "@sanity/orderable-document-list";
 import { DocumentIcon } from "@sanity/icons";
 import { defineArrayMember, defineField, defineType } from "sanity";
 
@@ -8,6 +9,7 @@ export const project = defineType({
   title: "Project",
   type: "document",
   icon: DocumentIcon,
+  orderings: [orderRankOrdering],
   fields: [
     defineField({
       name: "title",
@@ -21,9 +23,15 @@ export const project = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: "category",
+      type: "reference",
+      to: [{ type: "category" }],
+      description: "Groups this project in the navigation.",
+    }),
+    defineField({
       name: "year",
       type: "string",
-      description: "Used for ordering (newest first) and shown under the title.",
+      description: "Shown under the title.",
     }),
     defineField({
       name: "medium",
@@ -43,6 +51,7 @@ export const project = defineType({
         defineArrayMember({ type: "audioEmbed" }),
       ],
     }),
+    orderRankField({ type: "project" }),
   ],
   preview: {
     select: { title: "title", subtitle: "year" },

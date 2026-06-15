@@ -1,12 +1,14 @@
 import type { SchemaTypeDefinition } from "sanity";
 
 import { audioEmbed, videoEmbed } from "./blocks";
+import { category } from "./category";
 import { project } from "./project";
 import { contact, cv, information, siteSettings } from "./singletons";
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   // Documents
   project,
+  category,
   siteSettings,
   information,
   cv,

@@ -1,16 +1,18 @@
+import { orderableDocumentListDeskItem } from "@sanity/orderable-document-list";
 import {
   CogIcon,
-  DocumentsIcon,
   EnvelopeIcon,
   InfoOutlineIcon,
+  TagIcon,
   UsersIcon,
 } from "@sanity/icons";
 import type { StructureResolver } from "sanity/structure";
 
 /**
- * Studio desk: four single-instance documents up top, then the project list.
+ * Studio desk: four single-instance documents up top, then drag-orderable
+ * Categories and Projects lists (orderRank drives nav order).
  */
-export const structure: StructureResolver = (S) =>
+export const structure: StructureResolver = (S, context) =>
   S.list()
     .title("Content")
     .items([
@@ -39,5 +41,17 @@ export const structure: StructureResolver = (S) =>
         .icon(EnvelopeIcon)
         .child(S.document().schemaType("contact").documentId("contact")),
       S.divider(),
-      S.documentTypeListItem("project").title("Projects").icon(DocumentsIcon),
+      orderableDocumentListDeskItem({
+        type: "category",
+        title: "Categories",
+        icon: TagIcon,
+        S,
+        context,
+      }),
+      orderableDocumentListDeskItem({
+        type: "project",
+        title: "Projects",
+        S,
+        context,
+      }),
     ]);

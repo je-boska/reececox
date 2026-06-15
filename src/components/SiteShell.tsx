@@ -4,85 +4,125 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import type { NavProject, SiteSettings } from "@/sanity/types";
+import type { NavData, NavProject, SiteSettings } from "@/sanity/types";
 
 import styles from "./SiteShell.module.css";
 
-const META_LINKS = [
-  { href: "/information", label: "Information" },
+// "Static" pages — rendered directly below the name, no separator.
+const STATIC_LINKS = [
   { href: "/cv", label: "CV" },
   { href: "/contact", label: "Contact" },
 ];
 
+function ProjectLink({
+  project,
+  pathname,
+  onNavigate,
+}: {
+  project: NavProject;
+  pathname: string;
+  onNavigate: () => void;
+}) {
+  const href = `/projects/${project.slug}`;
+  return (
+    <li>
+      <Link
+        href={href}
+        onClick={onNavigate}
+        className={pathname === href ? styles.active : undefined}
+      >
+        {project.title}
+        {project.year ? (
+          <span className={styles.year}>, {project.year}</span>
+        ) : null}
+      </Link>
+    </li>
+  );
+}
+
 function NavContent({
   title,
-  projects,
+  nav,
   pathname,
   open,
   onNavigate,
 }: {
   title: string;
-  projects: NavProject[];
+  nav: NavData;
   pathname: string;
   open: boolean;
   onNavigate: () => void;
 }) {
-  const isActive = (href: string) => pathname === href;
-
   return (
     <nav
       id="site-nav"
       className={`${styles.nav} ${open ? styles.navOpen : ""}`}
-      aria-label="Projects and pages"
+      aria-label="Navigation"
     >
-      <Link href="/" className={styles.brand} onClick={onNavigate}>
+      {/* Name links to the Info / about page. */}
+      <Link
+        href="/info"
+        className={pathname === "/info" ? styles.active : undefined}
+        onClick={onNavigate}
+      >
         {title}
       </Link>
 
       <ul className={styles.list}>
-        {projects.map((project) => {
-          const href = `/projects/${project.slug}`;
-          return (
-            <li key={project._id}>
-              <Link
-                href={href}
-                onClick={onNavigate}
-                className={isActive(href) ? styles.active : styles.link}
-              >
-                {project.title}
-                {project.year ? (
-                  <span className={styles.year}>, {project.year}</span>
-                ) : null}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-
-      <ul className={styles.meta}>
-        {META_LINKS.map((item) => (
+        {STATIC_LINKS.map((item) => (
           <li key={item.href}>
             <Link
               href={item.href}
               onClick={onNavigate}
-              className={isActive(item.href) ? styles.active : styles.link}
+              className={pathname === item.href ? styles.active : undefined}
             >
               {item.label}
             </Link>
           </li>
         ))}
       </ul>
+
+      {nav.categories.map((cat) => (
+        <div key={cat._id} className={styles.group}>
+          <div className={styles.groupHeading}>{cat.title}</div>
+          <ul className={styles.list}>
+            {cat.projects.map((project) => (
+              <ProjectLink
+                key={project._id}
+                project={project}
+                pathname={pathname}
+                onNavigate={onNavigate}
+              />
+            ))}
+          </ul>
+        </div>
+      ))}
+
+      {nav.uncategorized.length > 0 ? (
+        <div className={styles.group}>
+          <ul className={styles.list}>
+            {nav.uncategorized.map((project) => (
+              <ProjectLink
+                key={project._id}
+                project={project}
+                pathname={pathname}
+                onNavigate={onNavigate}
+              />
+            ))}
+          </ul>
+        </div>
+      ) : null}
     </nav>
   );
 }
 
 export function SiteShell({
   settings,
-  projects,
+  nav,
   children,
 }: {
   settings: SiteSettings | null;
-  projects: NavProject[];
+  nav: NavData;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -97,9 +137,7 @@ export function SiteShell({
   return (
     <div className={styles.shell}>
       <header className={styles.topbar}>
-        <Link href="/" className={styles.brand}>
-          {title}
-        </Link>
+        <Link href="/info">{title}</Link>
         <button
           type="button"
           className={styles.menuButton}
@@ -113,7 +151,7 @@ export function SiteShell({
 
       <NavContent
         title={title}
-        projects={projects}
+        nav={nav}
         pathname={pathname}
         open={open}
         onNavigate={() => setOpen(false)}

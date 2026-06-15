@@ -12,16 +12,30 @@ const IMAGE_FIELDS = /* groq */ `
   }
 `;
 
-/** Left-nav project list. Ordered newest first, then alphabetically. */
-export const NAV_QUERY = defineQuery(`
-  *[_type == "project" && defined(slug.current)]
-    | order(year desc, title asc){
-      _id,
-      title,
-      "slug": slug.current,
-      year
-    }
-`);
+// One project as it appears in the nav.
+const NAV_PROJECT = /* groq */ `
+  _id,
+  title,
+  "slug": slug.current,
+  year
+`;
+
+/**
+ * Left-nav data: projects grouped by category (both ordered by orderRank from
+ * the orderable-document-list plugin), plus any projects with no category.
+ */
+export const NAV_QUERY = defineQuery(`{
+  "categories": *[_type == "category"] | order(orderRank){
+    _id,
+    title,
+    "projects": *[
+      _type == "project" && defined(slug.current) && references(^._id)
+    ] | order(orderRank){ ${NAV_PROJECT} }
+  },
+  "uncategorized": *[
+    _type == "project" && defined(slug.current) && !defined(category)
+  ] | order(orderRank){ ${NAV_PROJECT} }
+}`);
 
 export const SETTINGS_QUERY = defineQuery(`
   *[_type == "siteSettings"][0]{

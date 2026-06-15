@@ -14,7 +14,7 @@ export const resolve: PresentationPluginOptions["resolve"] = {
       route: "/projects/:slug",
       filter: `_type == "project" && slug.current == $slug`,
     },
-    { route: "/information", filter: `_type == "information"` },
+    { route: "/info", filter: `_type == "information"` },
     { route: "/cv", filter: `_type == "cv"` },
     { route: "/contact", filter: `_type == "contact"` },
     { route: "/", filter: `_type == "siteSettings"` },
@@ -38,7 +38,7 @@ export const resolve: PresentationPluginOptions["resolve"] = {
     information: defineLocations({
       select: { title: "title" },
       resolve: () => ({
-        locations: [{ title: "Information", href: "/information" }],
+        locations: [{ title: "Information", href: "/info" }],
       }),
     }),
     cv: defineLocations({

@@ -2,17 +2,13 @@ import { ImageIcon, MicrophoneIcon, VideoIcon } from "@sanity/icons";
 import { defineArrayMember, defineField, defineType } from "sanity";
 
 /**
- * Rich-text block used inside a project's content. Kept intentionally small:
- * normal text, two heading levels, a quote, lists, bold/italic, and links.
+ * Rich-text block used inside a project's content. Deliberately flat: a single
+ * text style at one size/weight. The ONLY typographic variation allowed on the
+ * whole site is bold/italic applied here, inside rich text.
  */
 export const richTextBlock = defineArrayMember({
   type: "block",
-  styles: [
-    { title: "Normal", value: "normal" },
-    { title: "Heading", value: "h2" },
-    { title: "Subheading", value: "h3" },
-    { title: "Quote", value: "blockquote" },
-  ],
+  styles: [{ title: "Normal", value: "normal" }],
   lists: [
     { title: "Bullet", value: "bullet" },
     { title: "Numbered", value: "number" },

@@ -19,6 +19,17 @@ export interface NavProject {
   year?: string;
 }
 
+export interface NavCategory {
+  _id: string;
+  title: string;
+  projects: NavProject[];
+}
+
+export interface NavData {
+  categories: NavCategory[];
+  uncategorized: NavProject[];
+}
+
 export interface SiteSettings {
   title?: string;
   description?: string;

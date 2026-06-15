@@ -6,9 +6,9 @@ export default async function SiteLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [projects, settings] = await Promise.all([loadNav(), loadSettings()]);
+  const [nav, settings] = await Promise.all([loadNav(), loadSettings()]);
   return (
-    <SiteShell projects={projects} settings={settings}>
+    <SiteShell nav={nav} settings={settings}>
       {children}
     </SiteShell>
   );

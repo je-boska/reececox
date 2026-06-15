@@ -14,7 +14,7 @@ import type {
   Contact,
   Cv,
   Information,
-  NavProject,
+  NavData,
   Project,
   SiteSettings,
 } from "./types";
@@ -39,7 +39,7 @@ async function safeFetch<T>(
 }
 
 export const loadNav = () =>
-  safeFetch<NavProject[]>(NAV_QUERY, {}, []);
+  safeFetch<NavData>(NAV_QUERY, {}, { categories: [], uncategorized: [] });
 
 export const loadSettings = () =>
   safeFetch<SiteSettings | null>(SETTINGS_QUERY, {}, null);

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Hanken_Grotesk } from "next/font/google";
 import { draftMode } from "next/headers";
 import { stegaClean } from "next-sanity";
 import { VisualEditing } from "next-sanity/visual-editing";
@@ -9,6 +10,15 @@ import { SanityLive } from "@/sanity/live";
 import { loadSettings } from "@/sanity/load";
 
 import "./globals.css";
+
+// Free Helvetica-alike grotesque with a true Medium (500). Self-hosted by
+// next/font — downloaded at build, served from our own origin (no external
+// requests). Helvetica/Arial remain as fallbacks in --font (see globals.css).
+const sans = Hanken_Grotesk({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-sans",
+});
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await loadSettings();
@@ -27,7 +37,7 @@ export default async function RootLayout({
 }) {
   const { isEnabled: isDraft } = await draftMode();
   return (
-    <html lang="en">
+    <html lang="en" className={sans.variable}>
       <body>
         {children}
         {isSanityConfigured && <SanityLive includeDrafts={isDraft} />}

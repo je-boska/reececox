@@ -1,12 +1,17 @@
 :root {
   --fg: #000;
   --bg: #fff;
-  --muted: #6b6b6b;
-  --line: rgba(0, 0, 0, 0.16);
+  /* 100% opacity black for everything — no greys, no transparency. */
+  --muted: #000;
+  --line: #000;
   --nav-width: 300px;
-  --pad: clamp(1.125rem, 2.2vw, 2rem);
+  /* 8px padding on everything, desktop included. */
+  --pad: 8px;
   --maxw-text: 42rem;
-  --font: Helvetica, "Helvetica Neue", Arial, "Liberation Sans", sans-serif;
+  --font: var(--font-sans), "Helvetica Neue", Helvetica, Arial,
+    "Liberation Sans", sans-serif;
+  /* Helvetica Medium. */
+  --weight: 500;
 }
 
 *,
@@ -25,10 +30,42 @@ body {
   background: var(--bg);
   color: var(--fg);
   font-family: var(--font);
-  font-size: 15px;
-  line-height: 1.5;
+  /* Uniform: Helvetica Medium 14px (12px on mobile), one weight everywhere. */
+  font-size: 14px;
+  font-weight: var(--weight);
+  line-height: 1.4;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+@media (max-width: 768px) {
+  body {
+    font-size: 12px;
+  }
+}
+
+/* The only typographic variation on the site: bold/italic inside rich text. */
+strong,
+b {
+  font-weight: 700;
+}
+
+em,
+i {
+  font-style: italic;
+}
+
+/* Uniform type: headings are NOT special. Reset the browser's big/bold h1–h6
+   to the one site size + weight. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: inherit;
+  font-weight: inherit;
+  margin: 0;
 }
 
 a {
