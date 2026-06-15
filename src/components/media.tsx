@@ -4,7 +4,11 @@ import type { SanityImage } from "@/sanity/types";
 
 import styles from "./Viewer.module.css";
 
-const IMG_WIDTHS = [640, 960, 1280, 1600, 2000];
+// Rendered max is the article column (~960px) and the 18rem portrait. Widths
+// cover up to ~2× the largest render for crisp HiDPI; the browser picks the
+// right one from `sizes`. Quality 85 (auto webp/avif keeps files small).
+const IMG_WIDTHS = [640, 960, 1280, 1600, 1920];
+const IMG_QUALITY = 85;
 
 export function SanityPicture({
   image,
@@ -18,7 +22,12 @@ export function SanityPicture({
   const asset = image.asset;
   const dims = asset.dimensions;
   const build = (w: number) =>
-    urlFor({ asset }).width(w).fit("max").auto("format").url();
+    urlFor({ asset })
+      .width(w)
+      .fit("max")
+      .auto("format")
+      .quality(IMG_QUALITY)
+      .url();
   const src = build(1600);
   const srcSet = IMG_WIDTHS.map((w) => `${build(w)} ${w}w`).join(", ");
 

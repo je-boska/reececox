@@ -29,6 +29,13 @@ export const siteSettings = defineType({
       rows: 2,
       description: "Used for SEO / link previews.",
     }),
+    defineField({
+      name: "favicon",
+      title: "Favicon",
+      type: "image",
+      description:
+        "Browser tab icon. Square image works best (PNG or SVG). PNGs are resized to 64×64 automatically.",
+    }),
   ],
   preview: { prepare: () => ({ title: "Site settings" }) },
 });

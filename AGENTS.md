@@ -71,7 +71,8 @@ src/
   both Projects and Categories in the Studio (orderRank) — that order drives the
   nav. Projects with no category are listed (ungrouped) at the bottom.
 - **siteSettings** (singleton, id `siteSettings`): `title` (shown in nav),
-  `description` (SEO).
+  `description` (SEO), `favicon` (image → browser tab icon; SVG served as-is,
+  raster cropped to a 64×64 PNG, wired into `<head>` via root `metadata.icons`).
 - **information** (singleton, id `information`): `title`, `bio`, `portrait`.
 - **cv** (singleton, id `cv`): `sections[]` → `heading` + `entries[]` (`year`,
   `text`).
@@ -135,6 +136,30 @@ The `sanity` CLI also reads `SANITY_STUDIO_PROJECT_ID` / `SANITY_STUDIO_DATASET`
 as a fallback (see `src/sanity/env.ts`).
 
 ---
+
+## Caching, revalidation & images
+
+- **Sanity is the only cache.** Public pages render dynamically
+  (`export const dynamic = "force-dynamic"` in `src/app/(site)/layout.tsx`), so
+  every request fetches fresh from Sanity's CDN. No Next data cache, and **no
+  revalidation webhook is needed** — publish in the Studio and the change shows
+  on the next request/navigation.
+- **Live updates.** `<SanityLive>` (root layout) subscribes to Sanity's Live
+  Content API, so already-open tabs update in near real-time without reload.
+- **Preview / drafts.** The Studio's Presentation tool enters draft mode
+  (`/api/draft-mode/enable`); drafts render live via the read token. Exit via
+  `/api/draft-mode/disable`.
+- **Why dynamic, not static:** without `force-dynamic` these pages prerender as
+  static at build, so prod would only update on redeploy. The next-sanity stack
+  targets Next's Cache Components; we deliberately don't enable that (simpler,
+  Sanity-only). If you later want edge/ISR caching, enable `cacheComponents` in
+  `next.config.ts` — `sanityFetch` already tags results and `<SanityLive>` calls
+  `revalidateTag`, so it would still revalidate without a webhook.
+- **Images** come from Sanity's CDN (not Next/Vercel image optimization).
+  `SanityPicture` requests `auto('format')` (webp/avif), **quality 85**, and a
+  responsive `srcSet` (640–1920px) + `sizes`, so the browser fetches ~the
+  rendered size (×DPR for HiDPI). Asset width/height set intrinsic dimensions
+  (no layout shift).
 
 ## ⚠️ Out of scope for the coding agent
 

@@ -5,9 +5,11 @@ export interface SanityImage {
   alt?: string;
   caption?: string;
   asset?: {
-    _id: string;
+    _id?: string;
     url: string;
     lqip?: string;
+    extension?: string;
+    mimeType?: string;
     dimensions?: { width: number; height: number; aspectRatio: number };
   };
 }
@@ -34,6 +36,7 @@ export interface SiteSettings {
   title?: string;
   description?: string;
   intro?: PortableTextBlock[];
+  favicon?: SanityImage;
 }
 
 export interface Project {
